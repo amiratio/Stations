@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -53,4 +55,13 @@ dependencies {
 
     // Lottie Animation
     implementation("com.airbnb.android:lottie:3.7.0")
+
+    // Permission X
+    implementation("com.guolindev.permissionx:permissionx:1.7.1")
+
+    // Smart Location
+    implementation("io.nlopez.smartlocation:library:3.3.3")
+
+    // Google Maps Play Service
+    implementation("com.google.android.gms:play-services-maps:18.1.0")
 }

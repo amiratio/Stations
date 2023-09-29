@@ -1,6 +1,7 @@
 package com.application.stations.utils.extension
 
 import android.app.Activity
+import android.content.res.Resources
 import android.os.Build
 import android.view.View
 import android.view.WindowManager
@@ -25,3 +26,7 @@ fun Activity.transparentStatusBar() {
     window.decorView.systemUiVisibility =
         window.decorView.systemUiVisibility or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
 }
+
+fun displayWidth() = Resources.getSystem().displayMetrics.widthPixels
+
+fun displayHeight() = Resources.getSystem().displayMetrics.heightPixels
