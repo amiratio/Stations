@@ -33,6 +33,9 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    viewBinding{
+        enable = true
+    }
 }
 
 dependencies {
@@ -47,4 +50,7 @@ dependencies {
 
     // Android Official Splash Screen
     implementation("androidx.core:core-splashscreen:1.0.1")
+
+    // Lottie Animation
+    implementation("com.airbnb.android:lottie:3.7.0")
 }
