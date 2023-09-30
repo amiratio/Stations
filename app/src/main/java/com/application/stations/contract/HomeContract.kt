@@ -8,6 +8,10 @@ interface HomeContract {
 
         fun hideLoading()
 
+        fun onMarkerSelected()
+
+        fun onMarkerUnSelected()
+
     }
 
     interface Presenter {
@@ -17,6 +21,12 @@ interface HomeContract {
         fun onDetach()
 
         fun initialize()
+
+        fun gotoMyLocation()
+
+        fun showNearbyStations()
+
+        fun showAllStations()
 
     }
 

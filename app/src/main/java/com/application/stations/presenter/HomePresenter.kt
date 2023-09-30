@@ -20,4 +20,16 @@ class HomePresenter @Inject constructor(private val mapHelper: MapHelper) : Home
         mapHelper.limitToTurkey()
         mapHelper.fetchCurrentLocation()
     }
+
+    override fun gotoMyLocation() {
+        mapHelper.gotoMyLocation()
+    }
+
+    override fun showAllStations() {
+        mapHelper.showAll()
+    }
+
+    override fun showNearbyStations() {
+        mapHelper.showNearby()
+    }
 }

@@ -25,4 +25,17 @@ class Repository @Inject constructor(
         }
     }
 
+    fun bookTrip(stationId: String, tripId: String, gr: GR<Boolean>) = CoroutineScope(Dispatchers.IO).launch {
+        val response= application.apiCall {
+            apiService.bookTrip(
+                RemoteConstants.BOOK_TRIP
+                    .replace("STATION_ID", stationId)
+                    .replace("TRIP_ID", tripId)
+            )
+        }
+        response.let {
+            gr.result(it.status)
+        }
+    }
+
 }

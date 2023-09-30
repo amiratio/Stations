@@ -10,16 +10,118 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginBottom="-30dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginTop="30dp"
+        android:padding="15dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/logo" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/yellow"
+            android:layout_marginStart="5dp"
+            android:layout_weight="1"
+            android:fontFamily="@font/brand"
+            android:shadowColor="@color/blue"
+            android:shadowDx="0.1"
+            android:shadowDy="0.1"
+            android:shadowRadius="5"
+            android:textSize="14sp"
+            android:text="@string/app_name" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:fontFamily="@font/semi_bold"
+            android:shadowColor="@color/yellow"
+            android:shadowDx="0.1"
+            android:shadowDy="0.1"
+            android:shadowRadius="5"
+            android:textSize="12sp"
+            android:text="@string/nearby" />
+
+        <com.suke.widget.SwitchButton
+            android:id="@+id/stationsMode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleY="0.7"
+            android:scaleX="0.7"
+            app:sb_background="@color/nearby_stations_switch"
+            app:sb_button_color="@color/white"
+            app:sb_checked="false"
+            app:sb_checked_color="@color/all_stations_switch"
+            app:sb_show_indicator="false"
+            app:sb_uncheck_color="@color/nearby_stations_switch"  />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:fontFamily="@font/semi_bold"
+            android:shadowColor="@color/yellow"
+            android:shadowDx="0.1"
+            android:shadowDy="0.1"
+            android:shadowRadius="5"
+            android:textSize="12sp"
+            android:text="@string/all" />
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/currentLocation"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/rounded"
+        android:padding="15dp"
+        android:layout_marginBottom="15dp"
+        android:src="@drawable/current_location"
+        app:layout_constraintBottom_toTopOf="@+id/listTrips"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:tint="@color/white" />
+
+    <Button
+        android:id="@+id/listTrips"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="60dp"
+        android:background="@drawable/button"
+        android:fontFamily="@font/medium"
+        android:text="@string/list_trips"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <include
         android:id="@+id/loading"
         layout="@layout/layout_loading"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -7,4 +7,8 @@
     <color name="background">#FFFFFFFF</color>
     <color name="blue">#1524aa</color>
     <color name="loading">#66FFFFFF</color>
+    <color name="nearby_stations_switch">#4CAF50</color>
+    <color name="all_stations_switch">#1524aa</color>
+    <color name="yellow">#FFC107</color>
+    <color name="separator">#F1F1F1</color>
 </resources>

@@ -4,12 +4,15 @@ import android.Manifest
 import android.content.IntentSender
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.application.stations.R
 import com.application.stations.contract.MapHelperContract
 import com.application.stations.model.Station
 import com.application.stations.remote.Repository
 import com.application.stations.ui.activity.Home
+import com.application.stations.utils.Constants.TURKEY_END_POINT
+import com.application.stations.utils.Constants.TURKEY_START_POINT
 import com.application.stations.utils.extension.displayHeight
 import com.application.stations.utils.extension.displayWidth
 import com.application.stations.utils.extension.uiThread
@@ -24,6 +27,8 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.gms.maps.model.MapStyleOptions
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.permissionx.guolindev.PermissionX
 import io.nlopez.smartlocation.SmartLocation
@@ -38,20 +43,26 @@ class MapHelper @Inject constructor(private val repository: Repository) : MapHel
     private var currentLat = 0.0
     private var currentLng = 0.0
     private val stations = ArrayList<Station>()
+    private var showingStations = ArrayList<Station>()
     private lateinit var home: Home
+
+    companion object{
+        var selectedStation: Station?= null
+    }
 
     override fun setup(appCompatActivity: AppCompatActivity, map: GoogleMap, home: Home) {
         this.appCompatActivity = appCompatActivity
         this.map = map
         this.home = home
+
+        map.setMapStyle(MapStyleOptions.loadRawResourceStyle(appCompatActivity, R.raw.map_style))
+        markerListener()
     }
 
     override fun limitToTurkey() {
-        val one = LatLng(42.743745, 24.908826)
-        val two = LatLng(35.382387, 45.818774)
         val builder = LatLngBounds.Builder().apply {
-            include(one)
-            include(two)
+            include(TURKEY_START_POINT)
+            include(TURKEY_END_POINT)
         }
         val bounds = builder.build()
         val padding = 10
@@ -101,48 +112,100 @@ class MapHelper @Inject constructor(private val repository: Repository) : MapHel
                     stations.add(i)
                 }
             }
-            refreshMap(stations)
+            showNearby()
             home.hideLoading()
         }
     }
 
-    override fun refreshMap(list: ArrayList<Station>) {
+    override fun refreshMap() {
         uiThread {
             map.clear()
+            createMarker(LatLng(currentLat, currentLng), 0, R.drawable.my_location)
         }
-        for (i in list) {
+        val selectedStationLatLng= if(selectedStation != null){
+            val selectedCoordinate = selectedStation?.center_coordinates?.split(",")!!
+            LatLng(selectedCoordinate[0].toDouble(),
+                selectedCoordinate[1].toDouble())
+        }
+        else null
+        for (i in showingStations) {
             if (!i.center_coordinates.isNullOrBlank()) {
                 val coordinate = i.center_coordinates.split(",")
                 val latLng = LatLng(coordinate[0].toDouble(), coordinate[1].toDouble())
-                createMarker(latLng, i.trips_count ?: 0)
+                uiThread {
+                    if(selectedStation == null){
+                        createMarker(latLng, i.trips_count ?: 0, R.drawable.spot)
+                    }else{
+                        if(latLng.latitude == selectedStationLatLng?.latitude &&
+                            latLng.longitude == selectedStationLatLng.longitude){
+                            createMarker(latLng, i.trips_count ?: 0, R.drawable.selected_spot).showInfoWindow()
+                        }else{
+                            createMarker(latLng, i.trips_count ?: 0, R.drawable.spot)
+                        }
+                    }
+                }
             }
         }
     }
 
     override fun showNearby() {
-        refreshMap(FilterNearbyStations(stations, currentLat, currentLng).filterWithinRadius())
+        showingStations= FilterNearbyStations(stations, currentLat, currentLng).filterWithinRadius()
+        refreshMap()
     }
 
     override fun showAll() {
-        refreshMap(stations)
+        showingStations= stations
+        refreshMap()
     }
 
     private fun moveCamera(latLng: LatLng) {
         map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14f))
     }
 
-    private fun createMarker(latLng: LatLng, tripsCount: Int) {
+    override fun gotoMyLocation() {
+        moveCamera(LatLng(currentLat, currentLng))
+    }
+
+    private fun createMarker(latLng: LatLng, tripsCount: Int, drawable: Int): Marker {
+        var marker: Marker?
         val smallMarker: Bitmap = Bitmap.createScaledBitmap(
-            BitmapFactory.decodeResource(appCompatActivity.resources, R.drawable.spot),
+            BitmapFactory.decodeResource(appCompatActivity.resources, drawable),
             70,
             70,
             false
         )
         val smallMarkerIcon = BitmapDescriptorFactory.fromBitmap(smallMarker)
-        uiThread {
-            map.addMarker(MarkerOptions().position(latLng).title(
+        if(drawable == R.drawable.my_location){
+            marker= map.addMarker(MarkerOptions().position(latLng))!!
+            marker.setIcon(smallMarkerIcon)
+        }else{
+            marker= map.addMarker(MarkerOptions().position(latLng).title(
                 "$tripsCount ${appCompatActivity.getString(R.string.trips)}"
-            ))!!.setIcon(smallMarkerIcon)
+            ))!!
+            marker.setIcon(smallMarkerIcon)
+        }
+        return marker
+    }
+
+    private fun markerListener(){
+        map.setOnMarkerClickListener {
+            selectedStation= null
+            for(i in showingStations){
+                val lat= i.center_coordinates!!.split(",")[0].toDouble()
+                val lng= i.center_coordinates.split(",")[1].toDouble()
+                if(lat == it.position.latitude && lng == it.position.longitude){
+                    selectedStation= i
+                    home.onMarkerSelected()
+                }
+            }
+            refreshMap()
+            true
+        }
+
+        map.setOnMapClickListener { latLng ->
+            selectedStation= null
+            home.onMarkerUnSelected()
+            refreshMap()
         }
     }
 

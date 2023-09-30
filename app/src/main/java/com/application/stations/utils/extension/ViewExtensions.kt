@@ -44,3 +44,5 @@ fun Context.unwrap(): Activity {
 fun View.show() = apply { visibility= View.VISIBLE }
 
 fun View.hide() = apply { visibility= View.GONE }
+
+fun View.invisible() = apply { visibility= View.INVISIBLE }

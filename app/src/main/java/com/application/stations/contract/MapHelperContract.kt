@@ -13,10 +13,12 @@ interface MapHelperContract {
 
     fun fetchCurrentLocation()
 
-    fun refreshMap(list: ArrayList<Station>)
+    fun refreshMap()
 
     fun showNearby()
 
     fun showAll()
+
+    fun gotoMyLocation()
 
 }

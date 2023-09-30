@@ -1,13 +1,18 @@
 package com.application.stations.ui.activity
 
 import android.os.Bundle
+import android.view.animation.AnimationUtils
+import androidx.core.view.isVisible
 import com.application.stations.presenter.HomePresenter
 import com.application.stations.R
 import com.application.stations.contract.HomeContract
 import com.application.stations.core.BaseActivity
 import com.application.stations.databinding.ActivityHomeBinding
 import com.application.stations.utils.MapHelper
+import com.application.stations.utils.MapHelper.Companion.selectedStation
+import com.application.stations.utils.extension.goto
 import com.application.stations.utils.extension.hide
+import com.application.stations.utils.extension.invisible
 import com.application.stations.utils.extension.show
 import com.application.stations.utils.extension.transparentStatusBar
 import com.google.android.gms.maps.GoogleMap
@@ -40,12 +45,46 @@ class Home : BaseActivity<ActivityHomeBinding>(), OnMapReadyCallback, HomeContra
     }
 
     private fun uiSetup() {
-        binding.loading.root.setOnClickListener { }
+        with(binding){
+            loading.root.setOnClickListener { }
+
+            stationsMode.setOnCheckedChangeListener { _, isChecked ->
+                if(isChecked) presenter.showAllStations()
+                else presenter.showNearbyStations()
+            }
+
+            currentLocation.setOnClickListener {
+                presenter.gotoMyLocation()
+            }
+
+            listTrips.setOnClickListener{
+                if(selectedStation != null) goto(Trips())
+            }
+        }
+
     }
 
     private fun mapSetup() {
         mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this@Home)
+    }
+
+    override fun onMarkerSelected() {
+        binding.listTrips.apply {
+            if(!isVisible){
+                show()
+                startAnimation(AnimationUtils.loadAnimation(this@Home, R.anim.fade_in))
+            }
+        }
+    }
+
+    override fun onMarkerUnSelected() {
+        binding.listTrips.apply {
+            if(isVisible){
+                startAnimation(AnimationUtils.loadAnimation(this@Home, R.anim.fade_out))
+                invisible()
+            }
+        }
     }
 
     override fun onMapReady(gm: GoogleMap) {

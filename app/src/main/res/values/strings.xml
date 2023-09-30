@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Stations</string>
-    <string name="google_api_key">AIzaSyBpzxQ_b_d91gfD4p1VuG7GOUNDbyBgaNY</string>
+    <string name="google_api_key">AIzaSyCvxKaE92HxvKvHCkm4cEJS_2SEfrUCffw</string>
 
     <string name="no_internet_title">No Internet Connection!</string>
     <string name="no_internet_description">Please check your Internet connection then try again.</string>
@@ -11,4 +11,8 @@
     <string name="location_permission_required_button">Turn On GPS</string>
 
     <string name="trips">Trips</string>
+    <string name="nearby">Nearby</string>
+    <string name="all">All</string>
+    <string name="list_trips">List Trips</string>
+    <string name="book">Book</string>
 </resources>
