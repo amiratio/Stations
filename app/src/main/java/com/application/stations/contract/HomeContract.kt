@@ -12,6 +12,8 @@ interface HomeContract {
 
         fun onMarkerUnSelected()
 
+        fun gotoTripsList()
+
     }
 
     interface Presenter {
@@ -27,6 +29,8 @@ interface HomeContract {
         fun showNearbyStations()
 
         fun showAllStations()
+
+        fun checkReservation()
 
     }
 

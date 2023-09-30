@@ -2,7 +2,6 @@ package com.application.stations.utils.extension
 
 import android.content.Context
 import android.net.ConnectivityManager
-import com.application.stations.R
 import com.application.stations.model.ResponseResult
 import com.application.stations.utils.Message
 import retrofit2.Response
@@ -11,7 +10,7 @@ suspend fun <T> Context.apiCall(call: suspend () -> Response<T>) : ResponseResul
 
     return try {
         val apiResponse= call.invoke()
-        ResponseResult(apiResponse.isSuccessful, apiResponse.body(), apiResponse.message())
+        ResponseResult(apiResponse.code() == 200, apiResponse.body(), apiResponse.message())
     }catch (e: Exception){
         if(!hasInternet()){
             Message(this).noInternet()

@@ -21,4 +21,6 @@ interface MapHelperContract {
 
     fun gotoMyLocation()
 
+    fun checkReservation()
+
 }

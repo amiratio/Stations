@@ -15,4 +15,14 @@
     <string name="all">All</string>
     <string name="list_trips">List Trips</string>
     <string name="book">Book</string>
+    <string name="booked">Booked</string>
+    <string name="exit_app">Double press back button to close the app</string>
+
+    <string name="book_failed_title">The trip you selected is full.</string>
+    <string name="book_failed_desc">Please select another one.</string>
+    <string name="book_failed_button">Select a Trip</string>
+
+    <string name="booked_title">This trip is currently booked.</string>
+    <string name="booked_desc">You currently booked this trip. Please select another trip to book.</string>
+    <string name="booked_button">Select Another Trip</string>
 </resources>

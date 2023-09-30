@@ -32,4 +32,8 @@ class HomePresenter @Inject constructor(private val mapHelper: MapHelper) : Home
     override fun showNearbyStations() {
         mapHelper.showNearby()
     }
+
+    override fun checkReservation() {
+        mapHelper.checkReservation()
+    }
 }

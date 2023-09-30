@@ -1,7 +1,6 @@
 package com.application.stations.di
 
 import android.app.Application
-import android.content.Context
 import com.application.stations.remote.ApiService
 import com.application.stations.remote.RemoteConstants
 import com.application.stations.remote.Repository
@@ -10,7 +9,6 @@ import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit

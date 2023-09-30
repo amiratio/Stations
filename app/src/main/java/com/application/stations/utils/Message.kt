@@ -9,7 +9,7 @@ import com.application.stations.utils.extension.unwrap
 
 class Message(private val context: Context) {
 
-    fun custom(title: String, description: String, button: String, gr: GR<Boolean>?= null, isForced: Boolean= false) {
+    private fun custom(title: String, description: String, button: String, gr: GR<Boolean>?= null, isForced: Boolean= false) {
         uiThread {
             val dialog= AlertDialog(title, description, button, gr, isForced)
             dialog.show((context.unwrap() as AppCompatActivity).supportFragmentManager, "AlertDialog")
@@ -31,6 +31,22 @@ class Message(private val context: Context) {
             getString(R.string.no_internet_title),
             getString(R.string.no_internet_description),
             getString(R.string.ok),
+        )
+    }
+
+    fun bookFailed() = context.apply {
+        custom(
+            getString(R.string.book_failed_title),
+            getString(R.string.book_failed_desc),
+            getString(R.string.book_failed_button),
+        )
+    }
+
+    fun alreadyBooked() = context.apply {
+        custom(
+            getString(R.string.booked_title),
+            getString(R.string.booked_desc),
+            getString(R.string.booked_button),
         )
     }
 

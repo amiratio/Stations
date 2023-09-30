@@ -2,14 +2,17 @@ package com.application.stations.ui.activity
 
 import android.os.Bundle
 import android.view.animation.AnimationUtils
+import android.widget.Toast
 import androidx.core.view.isVisible
-import com.application.stations.presenter.HomePresenter
 import com.application.stations.R
 import com.application.stations.contract.HomeContract
 import com.application.stations.core.BaseActivity
 import com.application.stations.databinding.ActivityHomeBinding
+import com.application.stations.presenter.HomePresenter
+import com.application.stations.ui.activity.Trips.Companion.tripSelected
 import com.application.stations.utils.MapHelper
 import com.application.stations.utils.MapHelper.Companion.selectedStation
+import com.application.stations.utils.extension.delay
 import com.application.stations.utils.extension.goto
 import com.application.stations.utils.extension.hide
 import com.application.stations.utils.extension.invisible
@@ -33,6 +36,20 @@ class Home : BaseActivity<ActivityHomeBinding>(), OnMapReadyCallback, HomeContra
     override val binding by lazy { ActivityHomeBinding.inflate(layoutInflater) }
     private lateinit var googleMap: GoogleMap
     private lateinit var mapFragment: SupportMapFragment
+    private var doubleBackToExitPressedOnce = false
+
+    @Deprecated("Deprecated in Java")
+    override fun onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed()
+            return
+        }
+        this.doubleBackToExitPressedOnce = true
+        Toast.makeText(this, getString(R.string.exit_app), Toast.LENGTH_SHORT).show()
+        delay(2000){
+            doubleBackToExitPressedOnce = false
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,6 +104,10 @@ class Home : BaseActivity<ActivityHomeBinding>(), OnMapReadyCallback, HomeContra
         }
     }
 
+    override fun gotoTripsList() {
+        binding.listTrips.performClick()
+    }
+
     override fun onMapReady(gm: GoogleMap) {
         googleMap = gm
         mapHelper.setup(this, googleMap, this)
@@ -103,6 +124,11 @@ class Home : BaseActivity<ActivityHomeBinding>(), OnMapReadyCallback, HomeContra
         runOnUiThread {
             binding.loading.root.hide()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if(tripSelected) presenter.checkReservation()
     }
 
     override fun onDestroy() {

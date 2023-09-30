@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.IntentSender
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.application.stations.R
 import com.application.stations.contract.MapHelperContract
@@ -42,11 +41,12 @@ class MapHelper @Inject constructor(private val repository: Repository) : MapHel
     private lateinit var map: GoogleMap
     private var currentLat = 0.0
     private var currentLng = 0.0
-    private val stations = ArrayList<Station>()
     private var showingStations = ArrayList<Station>()
     private lateinit var home: Home
+    private var mode= MapMode.NEARBY
 
     companion object{
+        val stations = ArrayList<Station>()
         var selectedStation: Station?= null
     }
 
@@ -91,7 +91,7 @@ class MapHelper @Inject constructor(private val repository: Repository) : MapHel
                     currentLat = location.latitude
                     currentLng = location.longitude
                     smartLocation.stop()
-                    moveCamera(LatLng(location.latitude, location.longitude))
+                    moveCamera(LatLng(currentLat, currentLng))
                     getStations()
                 }
             } else {
@@ -112,7 +112,8 @@ class MapHelper @Inject constructor(private val repository: Repository) : MapHel
                     stations.add(i)
                 }
             }
-            showNearby()
+            if(mode == MapMode.NEARBY) showNearby()
+            else showAll()
             home.hideLoading()
         }
     }
@@ -134,13 +135,31 @@ class MapHelper @Inject constructor(private val repository: Repository) : MapHel
                 val latLng = LatLng(coordinate[0].toDouble(), coordinate[1].toDouble())
                 uiThread {
                     if(selectedStation == null){
-                        createMarker(latLng, i.trips_count ?: 0, R.drawable.spot)
+                        if(i.hasReserve == true){
+                            createMarker(latLng,
+                                i.trips_count ?: 0, R.drawable.booked_spot
+                            )
+                        }else{
+                            createMarker(latLng,
+                                i.trips_count ?: 0, R.drawable.spot
+                            )
+                        }
                     }else{
                         if(latLng.latitude == selectedStationLatLng?.latitude &&
                             latLng.longitude == selectedStationLatLng.longitude){
-                            createMarker(latLng, i.trips_count ?: 0, R.drawable.selected_spot).showInfoWindow()
+                            createMarker(latLng,
+                                i.trips_count ?: 0, R.drawable.selected_spot
+                            ).showInfoWindow()
                         }else{
-                            createMarker(latLng, i.trips_count ?: 0, R.drawable.spot)
+                            if(i.hasReserve == true){
+                                createMarker(latLng,
+                                    i.trips_count ?: 0, R.drawable.booked_spot
+                                )
+                            }else{
+                                createMarker(latLng,
+                                    i.trips_count ?: 0, R.drawable.spot
+                                )
+                            }
                         }
                     }
                 }
@@ -149,11 +168,13 @@ class MapHelper @Inject constructor(private val repository: Repository) : MapHel
     }
 
     override fun showNearby() {
+        mode= MapMode.NEARBY
         showingStations= FilterNearbyStations(stations, currentLat, currentLng).filterWithinRadius()
         refreshMap()
     }
 
     override fun showAll() {
+        mode= MapMode.ALL
         showingStations= stations
         refreshMap()
     }
@@ -167,7 +188,7 @@ class MapHelper @Inject constructor(private val repository: Repository) : MapHel
     }
 
     private fun createMarker(latLng: LatLng, tripsCount: Int, drawable: Int): Marker {
-        var marker: Marker?
+        val marker: Marker?
         val smallMarker: Bitmap = Bitmap.createScaledBitmap(
             BitmapFactory.decodeResource(appCompatActivity.resources, drawable),
             70,
@@ -202,11 +223,22 @@ class MapHelper @Inject constructor(private val repository: Repository) : MapHel
             true
         }
 
-        map.setOnMapClickListener { latLng ->
+        map.setOnInfoWindowClickListener {
+            home.gotoTripsList()
+        }
+
+        map.setOnMapClickListener {
             selectedStation= null
             home.onMarkerUnSelected()
             refreshMap()
         }
+    }
+
+    override fun checkReservation(){
+        selectedStation= null
+        home.onMarkerUnSelected()
+        if(mode == MapMode.NEARBY) showNearby()
+        else showAll()
     }
 
     private fun locationRequest() {

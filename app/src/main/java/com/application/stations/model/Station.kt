@@ -6,4 +6,5 @@ data class Station(
     val trips_count: Int?,
     val center_coordinates: String?,
     val trips: List<Trip>?,
+    var hasReserve: Boolean?= false,
 )
