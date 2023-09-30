@@ -5,7 +5,22 @@ import android.content.Context
 import android.content.Intent
 import android.os.Handler
 import android.os.Looper
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
+
+fun uiThread(fn: () -> Unit){
+    Handler(Looper.getMainLooper()).post {
+        fn()
+    }
+}
+
+fun async(fn: () -> Unit){
+    CoroutineScope(Dispatchers.IO).launch {
+        fn()
+    }
+}
 
 fun delay(delay: Long, fn: () -> Unit){
     Handler(Looper.getMainLooper()).postDelayed({

@@ -1,6 +1,8 @@
 package com.application.stations.utils.extension
 
 import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
 import android.content.res.Resources
 import android.os.Build
 import android.view.View
@@ -30,3 +32,15 @@ fun Activity.transparentStatusBar() {
 fun displayWidth() = Resources.getSystem().displayMetrics.widthPixels
 
 fun displayHeight() = Resources.getSystem().displayMetrics.heightPixels
+
+fun Context.unwrap(): Activity {
+    var context: Context? = this
+    while (context !is Activity && context is ContextWrapper) {
+        context = context.baseContext
+    }
+    return context as Activity
+}
+
+fun View.show() = apply { visibility= View.VISIBLE }
+
+fun View.hide() = apply { visibility= View.GONE }
